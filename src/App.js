@@ -28,11 +28,20 @@ function App() {
   const handleAddClick = () => {
     if (!text) return;
 
+    const today = new Date();
+    const date = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const hours = today.getHours();
+    const minutes = today.getMinutes().toString().padStart(2, "0");
+    const currentTime = `${date}-${month}-${year} ${hours}:${minutes}`;
+
     const newTodo = {
       text: text,
-      id: new Date().getTime(),
+      id: new Date().getTime(), //random,(index)
       detail: detail,
       status: "notStarted",
+      createAt: currentTime,
     };
 
     setTodos([...todos, newTodo]);
@@ -116,17 +125,7 @@ function App() {
       }
     };
     filteringTodos();
-  }, [filter, todos]); //?
-
-  const today = new Date();
-  const date = today.getDate();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  const hours = today.getHours();
-  const minutes = today.getMinutes().toString().padStart(2, "0");
-  const currentTime = `${date}-${month}-${year} ${hours}:${minutes}`;
-
-  console.log(hours);
+  }, [filter, todos]); //?todos
 
   return (
     <Container
@@ -245,7 +244,7 @@ function App() {
                   </Select>
                 </FormControl>
 
-                <Box sx={{ mt: "8px" }}>{currentTime}</Box>
+                <Box sx={{ mt: "8px" }}>{todo.createAt}</Box>
 
                 <CancelIcon
                   sx={{
