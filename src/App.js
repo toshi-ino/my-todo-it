@@ -12,14 +12,31 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { db } from "./firebase";
 
-function App() {
-  const [todos, setTodos] = useState([]);
+const App = () => {
+  const [todos, setTodos] = useState([
+    { id: "", text: "", detail: "", status: "" },
+  ]);
+  // const [todos, setTodos] = useState([]);
+  useEffect(() => {
+    const unSub = db.collection("todos").onSnapshot((snapshot) => {
+      setTodos(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          text: doc.data().text,
+          detail: doc.data().detail,
+          status: doc.data().status,
+        }))
+      );
+    });
+    return () => unSub();
+  }, []);
   const [text, setText] = useState("");
   const [detail, setDetail] = useState("");
   const [status, setStatus] = useState("notStarted");
   const [filter, setFilter] = useState("all");
-  const [filteredTodos, setFilteredTodos] = useState([]);
+  // const [filteredTodos, setFilteredTodos] = useState([]);
 
   const handleTodoChange = (e) => {
     setText(e.target.value);
@@ -105,23 +122,19 @@ function App() {
     const filteringTodos = () => {
       switch (filter) {
         case "notStarted":
-          setFilteredTodos(
-            todos.filter((todo) => todo.status === "notStarted")
-          );
+          setTodos(todos.filter((todo) => todo.status === "notStarted"));
           break;
 
         case "inProgress":
-          setFilteredTodos(
-            todos.filter((todo) => todo.status === "inProgress")
-          );
+          setTodos(todos.filter((todo) => todo.status === "inProgress"));
           break;
 
         case "done":
-          setFilteredTodos(todos.filter((todo) => todo.status === "done"));
+          setTodos(todos.filter((todo) => todo.status === "done"));
           break;
 
         default:
-          setFilteredTodos(todos);
+          setTodos(todos);
       }
     };
     filteringTodos();
@@ -207,7 +220,7 @@ function App() {
         </FormControl>
 
         <ul>
-          {filteredTodos.map((todo) => {
+          {todos.map((todo) => {
             return (
               <li key={todo.id}>
                 <TextField
@@ -264,6 +277,6 @@ function App() {
       </Box>
     </Container>
   );
-}
+};
 
 export default App;
