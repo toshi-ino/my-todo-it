@@ -45,6 +45,8 @@ const App = () => {
   const handleAddClick = () => {
     if (!text) return;
 
+    db.collection("todos").add({ text: text, status: status, detail: detail });
+
     const today = new Date();
     const date = today.getDate();
     const month = today.getMonth() + 1;
@@ -72,6 +74,8 @@ const App = () => {
   };
 
   const handleStatusChange = (id, status) => {
+    db.collection("todos").doc(id).set({ status: status }, { merge: true });
+
     const deepCopy = todos.map((todo) => ({ ...todo }));
     const newTodos = deepCopy.map((todo) => {
       if (todo.id === id) {
@@ -90,32 +94,35 @@ const App = () => {
     // const newTodos = deepCopy.filter((todo) => {//?
     //   return todo.id !== id;
     // });
-    const newTodos = todos.filter((todo) => {
-      return todo.id !== id; //? Where are they?
-    });
-    setTodos(newTodos);
+    db.collection("todos").doc(id).delete();
+    // const newTodos = todos.filter((todo) => {
+    //   return todo.id !== id; //? Where are they?
+    // });
+    // setTodos(newTodos);
   };
 
   const handleEditTextChange = (id, text) => {
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.text = text;
-      }
-      return todo;
-    });
-    setTodos(newTodos);
+    db.collection("todos").doc(id).set({ text: text }, { merge: true });
+    // const deepCopy = todos.map((todo) => ({ ...todo }));
+    // const newTodos = deepCopy.map((todo) => {
+    //   if (todo.id === id) {
+    //     todo.text = text;
+    //   }
+    //   return todo;
+    // });
+    // setTodos(newTodos);
   };
 
   const handleEditDetailChange = (id, detail) => {
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.detail = detail;
-      }
-      return todo;
-    });
-    setTodos(newTodos);
+    db.collection("todos").doc(id).set({ detail: detail }, { merge: true });
+    // const deepCopy = todos.map((todo) => ({ ...todo }));
+    // const newTodos = deepCopy.map((todo) => {
+    //   if (todo.id === id) {
+    //     todo.detail = detail;
+    //   }
+    //   return todo;
+    // });
+    // setTodos(newTodos);
   };
 
   useEffect(() => {
@@ -169,7 +176,7 @@ const App = () => {
         </Typography>
         <TextField
           id="filled-basic"
-          label="Task Title"
+          label="New task?"
           variant="filled"
           type="text"
           value={text}
