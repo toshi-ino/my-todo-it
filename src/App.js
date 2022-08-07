@@ -15,10 +15,16 @@ import {
 import { db } from "./firebase";
 
 const App = () => {
+  // const [todos, setTodos] = useState([]);
   const [todos, setTodos] = useState([
     { id: "", text: "", detail: "", status: "" },
   ]);
-  // const [todos, setTodos] = useState([]);
+  const [text, setText] = useState("");
+  const [detail, setDetail] = useState("");
+  const [status, setStatus] = useState("notStarted");
+  const [filter, setFilter] = useState("all");
+  const [filteredTodos, setFilteredTodos] = useState([]);
+
   useEffect(() => {
     const unSub = db.collection("todos").onSnapshot((snapshot) => {
       setTodos(
@@ -32,11 +38,10 @@ const App = () => {
     });
     return () => unSub();
   }, []);
-  const [text, setText] = useState("");
-  const [detail, setDetail] = useState("");
-  const [status, setStatus] = useState("notStarted");
-  const [filter, setFilter] = useState("all");
-  // const [filteredTodos, setFilteredTodos] = useState([]);
+
+  useEffect(() => {
+    setFilteredTodos(todos);
+  }, todos);
 
   const handleTodoChange = (e) => {
     setText(e.target.value);
@@ -129,19 +134,23 @@ const App = () => {
     const filteringTodos = () => {
       switch (filter) {
         case "notStarted":
-          setTodos(todos.filter((todo) => todo.status === "notStarted"));
+          setFilteredTodos(
+            todos.filter((todo) => todo.status === "notStarted")
+          );
           break;
 
         case "inProgress":
-          setTodos(todos.filter((todo) => todo.status === "inProgress"));
+          setFilteredTodos(
+            todos.filter((todo) => todo.status === "inProgress")
+          );
           break;
 
         case "done":
-          setTodos(todos.filter((todo) => todo.status === "done"));
+          setFilteredTodos(todos.filter((todo) => todo.status === "done"));
           break;
 
         default:
-          setTodos(todos);
+          setFilteredTodos(todos);
       }
     };
     filteringTodos();
@@ -227,7 +236,7 @@ const App = () => {
         </FormControl>
 
         <ul>
-          {todos.map((todo) => {
+          {filteredTodos.map((todo) => {
             return (
               <li key={todo.id}>
                 <TextField
