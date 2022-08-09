@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { AuthProvider } from "../context/AuthContext";
 
 import "./App.css";
 import Home from "./Home";
@@ -7,7 +8,7 @@ import SignUp from "./Signup";
 
 const App = () => {
   return (
-    <>
+    <AuthProvider>
       <Router>
         <Switch>
           <Route exact path="/" component={Home} />
@@ -15,7 +16,7 @@ const App = () => {
           <Route exact path="/login" component={LogIn} />
         </Switch>
       </Router>
-    </>
+    </AuthProvider>
   );
 };
 

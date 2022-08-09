@@ -1,6 +1,6 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import { auth, db } from "./firebase";
 
 import { AddCircle } from "@mui/icons-material";
@@ -15,6 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useAuthContext } from "../context/AuthContext";
 
 const Home = () => {
   // const [todos, setTodos] = useState([]);
@@ -27,6 +28,7 @@ const Home = () => {
   const [filter, setFilter] = useState("all");
   const [filteredTodos, setFilteredTodos] = useState([]);
   const history = useHistory();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const unSub = db.collection("todos").onSnapshot((snapshot) => {
@@ -164,8 +166,10 @@ const Home = () => {
     filteringTodos();
   }, [filter, todos]); //?todos
 
-  return (
-    <>
+  if (!user) {
+    return <Redirect to="/login" />;
+  } else {
+    return (
       <Container
         maxWidth="xs"
         sx={{
@@ -302,8 +306,8 @@ const Home = () => {
           <button onClick={handleLogout}>Log out</button>
         </Box>
       </Container>
-    </>
-  );
+    );
+  }
 };
 
 export default Home;
