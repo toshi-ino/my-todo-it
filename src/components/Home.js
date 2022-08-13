@@ -29,7 +29,6 @@ const Home = () => {
   const [filteredTodos, setFilteredTodos] = useState([]);
   const history = useHistory();
   const { user } = useAuthContext();
-  const [render, setRender] = useState(false);
 
   useEffect(() => {
     const unSub = db.collection("todos").onSnapshot((snapshot) => {
@@ -170,7 +169,6 @@ const Home = () => {
   if (!user) {
     return <Redirect to="/login" />;
   } else {
-    setRender(true);
     return (
       <Container
         maxWidth="xs"
